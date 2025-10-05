@@ -3,6 +3,7 @@
 import { readdirSync, writeFileSync } from 'fs';
 import path from 'path';
 import data from "./data.js"
+import { diffieHellman } from 'crypto';
 
 const currentDirectory = process.cwd();
 const files = readdirSync(currentDirectory, "utf-8");
@@ -27,5 +28,27 @@ else{
     console.log(giContents);
     writeFileSync(gitignorePath, giContents);
     console.log("😸 .gitignore created!");
+
+}
+if(process.argv.length >=3 && process.argv[2].toLowerCase() == "license" && !files.includes("LICENSE")){
+    
+    let license = data["license"]["MIT"]
+    const licensePath = path.join(currentDirectory, "LICENSE");
+    if(process.argv.length > 3){
+        switch (process.argv[3].toUpperCase()) {
+            case "MIT":
+                license = data["license"]["MIT"]
+                break;
+        // TODO: Add API to load licenses
+        // https://opendefinition.org/licenses/api/
+            default:
+                console.log("😿 License not found. Using MIT.")
+                break;
+        }
+    }
+    console.log(`Creating LICENSE`);
+    console.log(license);
+    writeFileSync(licensePath, license);
+    console.log("😸 LICENSE created!");
 
 }
