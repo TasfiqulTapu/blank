@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import { readdirSync, writeFileSync } from 'fs';
+import { readdirSync, writeFileSync, mkdirSync, statSync} from 'fs';
 import path from 'path';
 import data from "./data.js"
 
-const currentDirectory = process.cwd();
-const files = readdirSync(currentDirectory, "utf-8");
+let currentDirectory = process.cwd();
+let files = readdirSync(currentDirectory, "utf-8");
 
 
 if(process.argv.length==2){
@@ -29,10 +29,35 @@ if(process.argv.length >=3){
             break;
 
         default:
+            createScaffold(process.argv[2])
             console.log("que?")
             break;
     }
     
+}
+
+function createScaffold(name){
+    const dirPath = path.join(currentDirectory, name);
+    try {
+        const stats = statSync(dirPath);
+        if(stats.isDirectory()) console.log("😿 A directory with that name exists.");
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            // Directory does not exist
+            mkdirSync(dirPath);
+            currentDirectory = path.join(currentDirectory, name);
+            files = []
+            createPackage();
+            createGitIgnore();
+            createLicense();
+            return true;
+        } else {
+        // Other error
+        console.log(err)
+            console.log("😿 Error making directory.")
+            return false;
+        }
+    }
 }
 
 
