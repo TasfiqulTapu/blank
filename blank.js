@@ -3,35 +3,83 @@
 import { readdirSync, writeFileSync } from 'fs';
 import path from 'path';
 import data from "./data.js"
-import { diffieHellman } from 'crypto';
 
 const currentDirectory = process.cwd();
 const files = readdirSync(currentDirectory, "utf-8");
 
-if(files.includes("package.json"))
-    console.log("😾 This directory contains a \x1b[;33mpackage.json\x1b[;0m.\nAre you sure you want to create a new package?");
-else{
+
+if(process.argv.length==2){
+    createPackage();
+    createGitIgnore();
+    createLicense();
+}
+if(process.argv.length >=3){
+    switch (process.argv[2].toLowerCase()) {
+        case "package":
+        case "pack":
+            createPackage()
+            break;
+        case "gitignore":
+        case "gi":
+            createGitIgnore()
+            break;
+        case "license":
+        case "lc":
+            createLicense()
+            break;
+
+        default:
+            console.log("que?")
+            break;
+    }
+    
+}
+
+
+function createPackage(){
+
+    if(files.includes("package.json")){
+        console.log("😾 This directory contains a \x1b[;33mpackage.json\x1b[;0m.\nAre you sure you want to create a new package?");
+        return 1;
+    }
+
     const packagePath = path.join(currentDirectory, "package.json");
+    // TODO: let user choose from templates or input custom data
     const pjContents = data["package.json"];
     pjContents.name = path.basename(process.cwd());
+    if(process.argv.length >= 4) pjContents.name = process.argv[3];
     console.log(`Creating package.json`);
-    console.log(pjContents);
+    // console.log(pjContents);
     writeFileSync(packagePath, JSON.stringify(pjContents, null, 4));
     console.log("😸 package.json created!");
+    return 0;
 }
-if(files.includes(".gitignore")) 
-    console.log("😾 This directory contains a \x1b[;33m.gitignore\x1b[;0m.\nAre you sure you want to create a new package?");
-else{ 
+
+function createGitIgnore(){
+
+    if(files.includes(".gitignore")){
+        console.log("😾 This directory contains a \x1b[;33m.gitignore\x1b[;0m.\nAre you sure you want to create a new package?");
+        return 1;
+    } 
+
     const gitignorePath = path.join(currentDirectory, ".gitignore");
+    // TODO: allow users to choose gitignore template
     const giContents = data[".gitignore"];
     console.log(`Creating .gitgnore`);
-    console.log(giContents);
+    // console.log(giContents);
     writeFileSync(gitignorePath, giContents);
     console.log("😸 .gitignore created!");
-
+    return 0;
 }
-if(process.argv.length >=3 && process.argv[2].toLowerCase() == "license" && !files.includes("LICENSE")){
-    
+
+
+function createLicense(){
+
+    if(files.includes("LICENSE")){
+        console.log("😾 This directory contains a \x1b[;33mLICENSE\x1b[;0m.\nAre you sure you want to create a new license?");
+        return 1; 
+    }
+
     let license = data["license"]["MIT"]
     const licensePath = path.join(currentDirectory, "LICENSE");
     if(process.argv.length > 3){
@@ -39,16 +87,17 @@ if(process.argv.length >=3 && process.argv[2].toLowerCase() == "license" && !fil
             case "MIT":
                 license = data["license"]["MIT"]
                 break;
-        // TODO: Add API to load licenses
-        // https://opendefinition.org/licenses/api/
-            default:
-                console.log("😿 License not found. Using MIT.")
-                break;
+                // TODO: Add API to load licenses
+                // https://opendefinition.org/licenses/api/
+                default:
+                    console.log("😿 License not specified. Using MIT.")
+                    break;
+            }
         }
-    }
     console.log(`Creating LICENSE`);
-    console.log(license);
+    // console.log(license);
     writeFileSync(licensePath, license);
     console.log("😸 LICENSE created!");
-
+    return 0;
 }
+            
