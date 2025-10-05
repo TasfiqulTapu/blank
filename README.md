@@ -10,6 +10,13 @@ This script is developed to solve a very niche problem I have of pushign `node_m
 > [!WARNING]
 > This project has not been published to npm. Usage will change soon
 
+Add `package.json` and `.gitignore`
 ```bash
 npx path/to/folder/.
 ```
+
+Add licenses
+```bash
+npx path/to/folder/. license <MIT|"">
+```
+
