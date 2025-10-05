@@ -8,7 +8,8 @@ export default
     "type": "module",
     "main": "index.js",
     "scripts": {
-      "run": "node index.js"
+      "run": "node index.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
     "author": "",
